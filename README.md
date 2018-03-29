@@ -1,2 +1,2 @@
-#RobCoin
+# RobCoin
 Trying out building a cryptocurrency

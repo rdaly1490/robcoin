@@ -1,0 +1,29 @@
+{
+  "name": "robcoin",
+  "version": "1.0.0",
+  "description": "cryptocurrency",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll",
+    "dev-test": "nodemon dev-test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rdaly1490/robcoin.git"
+  },
+  "keywords": ["cryptocurrency"],
+  "author": "Rob Daly",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rdaly1490/robcoin/issues"
+  },
+  "homepage": "https://github.com/rdaly1490/robcoin#readme",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "npm": "^5.8.0"
+  },
+  "devDependencies": {
+    "jest": "^22.4.3",
+    "nodemon": "^1.17.2"
+  }
+}
