@@ -1,12 +1,12 @@
-const BlockChain = require("../blockchain");
+const Blockchain = require("../blockchain");
 const Block = require("../block");
 
 describe("Blockchain", () => {
   let blockchain, incomingBlockchain;
 
   beforeEach(() => {
-    blockchain = new BlockChain();
-    incomingBlockchain = new BlockChain();
+    blockchain = new Blockchain();
+    incomingBlockchain = new Blockchain();
   });
 
   it("starts with the genesis block", () => {

@@ -1,6 +1,6 @@
 const Block = require("./block");
 
-class BlockChain {
+class Blockchain {
   constructor() {
     this.chain = [Block.genesis()];
   }
@@ -45,4 +45,4 @@ class BlockChain {
   }
 }
 
-module.exports = BlockChain;
+module.exports = Blockchain;
