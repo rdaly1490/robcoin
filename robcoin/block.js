@@ -33,6 +33,11 @@ class Block {
     // method returns an object with toString method which returns hash
     return SHA256(`${timeStamp}${lastHash}${data}`).toString();
   }
+
+  static getHashForBlock(block) {
+    const { timeStamp, lastHash, data } = block;
+    return Block.generateHash(timeStamp, lastHash, data);
+  }
 }
 
 module.exports = Block;
