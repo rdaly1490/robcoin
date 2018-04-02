@@ -1,6 +1,4 @@
-const Blockchain = require("./robcoin/blockchain");
-const bc = new Blockchain();
+const Wallet = require("./wallet/wallet");
+const wallet = new Wallet();
 
-for (let i = 0; i < 10; i++) {
-  console.log(bc.addBlock(`foo ${i}`).toString());
-}
+console.log(wallet.toString());
