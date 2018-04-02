@@ -3,19 +3,37 @@ const bodyParser = require("body-parser");
 const Blockchain = require("../blockchain/blockchain");
 const P2pServer = require("./p2p-server");
 
+const Wallet = require("../wallet/wallet");
+const TransactionPool = require("../wallet/transaction-pool");
+
 const HTTP_PORT = process.env.HTTP_PORT || 3001;
 
 const app = express();
 const blockchain = new Blockchain();
-const p2pServer = new P2pServer(blockchain);
+const wallet = new Wallet();
+const pool = new TransactionPool();
+const p2pServer = new P2pServer(blockchain, pool);
 
 app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true
+  })
+);
 
 // The first node will create the P2P websocket server
 // Later nodes will connect to this server
 
 app.get("/blocks", (req, res) => {
   res.json(blockchain.chain);
+});
+
+app.get("/transactions", (req, res) => {
+  res.json(pool.transactions);
+});
+
+app.get("/public-key", (req, res) => {
+  res.json({ publicKey: wallet.publicKey });
 });
 
 app.post("/mine", (req, res) => {
@@ -26,6 +44,16 @@ app.post("/mine", (req, res) => {
 
   // return the updated chain to the miner
   res.redirect("/blocks");
+});
+
+app.post("/transact", (req, res) => {
+  const { recipient, amount } = req.body;
+  const transaction = wallet.createTransaction(recipient, amount, pool);
+  console.log(`New transaction added to pool: ${transaction.toString()}`);
+
+  p2pServer.broadcastTransaction(transaction);
+
+  res.redirect("/transactions");
 });
 
 app.listen(HTTP_PORT, () => {

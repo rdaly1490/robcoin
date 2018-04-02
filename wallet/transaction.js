@@ -7,6 +7,14 @@ class Transaction {
     this.outputs = [];
   }
 
+  toString() {
+    return `Transaction -
+      UUID   : ${this.id.toString()}
+      Input  : ${JSON.stringify(this.input)}
+      Outputs: ${JSON.stringify(this.outputs)}
+    `;
+  }
+
   // Handles adding a new output object and resigns the transaction:
   // Don't need to create a whole new transaction object if the user wants to send more currency
   // within a short time frame.  Just add more outputs to the original transaction and resign it.
