@@ -1,15 +1,16 @@
 const TransactionPool = require("../transaction-pool");
 const Transaction = require("../transaction");
 const Wallet = require("../wallet");
+const Blockchain = require("../../blockchain/blockchain");
 
 describe("TransactionPool", () => {
-  let pool, wallet, transaction;
+  let pool, wallet, transaction, blockchain;
 
   beforeEach(() => {
     pool = new TransactionPool();
     wallet = new Wallet();
-    transaction = Transaction.newTransaction(wallet, "4ddr355", 30);
-    pool.updateOrAddTransaction(transaction);
+    blockchain = new Blockchain();
+    transaction = wallet.createTransaction("4ddr355", 30, blockchain, pool);
   });
 
   it("adds a transaction to the pool", () => {
@@ -26,5 +27,36 @@ describe("TransactionPool", () => {
     expect(
       JSON.stringify(pool.transactions.find(t => t.id === transaction.id))
     ).not.toEqual(oldTransaction);
+  });
+
+  it("clears transactions", () => {
+    pool.clear();
+    expect(pool.transactions).toEqual([]);
+  });
+
+  describe("mixing valid and corrupt transactions", () => {
+    let validTransactions;
+
+    beforeEach(() => {
+      validTransactions = [...pool.transactions];
+      for (let i = 0; i < 6; i++) {
+        wallet = new Wallet();
+        transaction = wallet.createTransaction("4ddr355", 30, blockchain, pool);
+        if (i % 2 === 0) {
+          //corrupt the transaction
+          transaction.input.amount = 99999;
+        } else {
+          validTransactions.push(transaction);
+        }
+      }
+    });
+
+    it("shows a difference between valid and corrupt transactions", () => {
+      expect(JSON.stringify(pool.transactions)).not.toEqual(validTransactions);
+    });
+
+    it("grabs valid transactions", () => {
+      expect(pool.validTransactions()).toEqual(validTransactions);
+    });
   });
 });

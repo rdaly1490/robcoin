@@ -1,4 +1,5 @@
 const ChainUtil = require("../chain-util");
+const { MINING_REWARD } = require("../config");
 
 class Transaction {
   constructor() {
@@ -35,32 +36,44 @@ class Transaction {
     return this;
   }
 
-  static newTransaction(senderWallet, recipient, amount) {
+  static transactionWithOutputs(senderWallet, outputs) {
     const transaction = new this();
+    transaction.outputs.push(...outputs);
+    Transaction.signTransaction(transaction, senderWallet);
+    return transaction;
+  }
 
+  static newTransaction(senderWallet, recipient, amount) {
     if (amount > senderWallet.balance) {
       console.log(`Amount: ${amount} exceeds balance`);
       return;
     }
 
-    // Outputs consist of 2 things: How much balance they have remaining after a transaction &
-    // how much the person is sending in the transaction.  And a publicKey address for each.
-    transaction.outputs.push(
-      ...[
-        {
-          amount: senderWallet.balance - amount,
-          address: senderWallet.publicKey
-        },
-        {
-          amount,
-          address: recipient
-        }
-      ]
-    );
+    // Outputs consist of 2 main things across n transactions:
+    // 1. How much balance they have remaining after all other n transactions and their address.
+    // 2. How much the person is sending in each of the n transaction and to what addresses.
+    const outputs = [
+      {
+        amount: senderWallet.balance - amount,
+        address: senderWallet.publicKey
+      },
+      {
+        amount,
+        address: recipient
+      }
+    ];
 
-    Transaction.signTransaction(transaction, senderWallet);
+    return Transaction.transactionWithOutputs(senderWallet, outputs);
+  }
 
-    return transaction;
+  static rewardTransaction(minerWallet, blockchainWallet) {
+    const outputs = [
+      {
+        amount: MINING_REWARD,
+        address: minerWallet.publicKey
+      }
+    ];
+    return Transaction.transactionWithOutputs(blockchainWallet, outputs);
   }
 
   static signTransaction(transaction, senderWallet) {
