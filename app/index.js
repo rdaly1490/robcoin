@@ -44,6 +44,10 @@ app.get("/public-key", (req, res) => {
   res.json({ publicKey: wallet.publicKey });
 });
 
+app.get("/balance", (req, res) => {
+  res.json({ balance: wallet.balance });
+});
+
 app.post("/mine", (req, res) => {
   const block = blockchain.addBlock(req.body.data);
   console.log(`New block added: ${block.toString()}`);
@@ -56,7 +60,12 @@ app.post("/mine", (req, res) => {
 
 app.post("/transact", (req, res) => {
   const { recipient, amount } = req.body;
-  const transaction = wallet.createTransaction(recipient, amount, pool);
+  const transaction = wallet.createTransaction(
+    recipient,
+    amount,
+    blockchain,
+    pool
+  );
   console.log(`New transaction added to pool: ${transaction.toString()}`);
 
   p2pServer.broadcastTransaction(transaction);
