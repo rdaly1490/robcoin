@@ -30,6 +30,10 @@ app.get("/", (req, res) => {
   res.send("<h1>RobCoin Server Up and Running<h1>");
 });
 
+app.get("/peers", (req, res) => {
+  res.json({ sockets: p2pServer.sockets });
+});
+
 app.get("/blocks", (req, res) => {
   res.json(blockchain.chain);
 });
