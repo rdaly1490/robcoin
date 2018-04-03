@@ -26,6 +26,10 @@ app.use(
 // The first node will create the P2P websocket server
 // Later nodes will connect to this server
 
+app.get("/", (req, res) => {
+  res.send("<h1>RobCoin Server Up and Running<h1>");
+});
+
 app.get("/blocks", (req, res) => {
   res.json(blockchain.chain);
 });
